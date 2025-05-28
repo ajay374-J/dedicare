@@ -10,6 +10,18 @@ import frappe
 from erpnext.stock.doctype.batch.batch import get_batch_qty
 
 
+from erpnext.setup.doctype.item_group import item_group
+
+from erpnext.shopping_cart import product_info
+from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings \
+	import get_shopping_cart_settings, show_quantity_in_website
+
+from erpnext.shopping_cart.cart import _get_cart_quotation
+
+from erpnext.utilities.product import get_price
+
+
+
 
 
 
@@ -71,3 +83,64 @@ def adjust_qty_for_expired_items(item_code, stock_qty, warehouse):
 product.get_qty_in_stock=get_qty_in_stock
 
 product.adjust_qty_for_expired_items=adjust_qty_for_expired_items
+
+
+
+def adjust_qty_for_expired_items_v(data):
+	adjusted_data = []
+
+	for item in data:
+		if item.get('has_batch_no') and item.get('website_warehouse'):
+			stock_qty_dict = get_qty_in_stock(
+				item.get('name'), 'website_warehouse', item.get('website_warehouse'))
+			qty = stock_qty_dict.stock_qty[0] if stock_qty_dict.stock_qty else 0
+			item['in_stock'] = 1 if qty else 0
+		adjusted_data.append(item)
+
+	return adjusted_data
+
+item_group.adjust_qty_for_expired_items=adjust_qty_for_expired_items_v
+
+
+@frappe.whitelist(allow_guest=True)
+def get_product_info_for_website(item_code):
+	"""get product price / stock info for website"""
+
+	cart_settings = get_shopping_cart_settings()
+	if not cart_settings.enabled:
+		return frappe._dict()
+
+	cart_quotation = _get_cart_quotation()
+
+	price = get_price(
+		item_code,
+		cart_quotation.selling_price_list,
+		cart_settings.default_customer_group,
+		cart_settings.company
+	)
+
+	stock_status = get_qty_in_stock(item_code, "website_warehouse")
+
+	product_info = {
+		"price": price,
+		"stock_qty": stock_status.stock_qty,
+		"in_stock": stock_status.in_stock if stock_status.is_stock_item else 1,
+		"qty": 0,
+		"uom": frappe.db.get_value("Item", item_code, "stock_uom"),
+		"show_stock_qty": show_quantity_in_website(),
+		"sales_uom": frappe.db.get_value("Item", item_code, "sales_uom")
+	}
+
+	if product_info["price"]:
+		if frappe.session.user != "Guest":
+			item = cart_quotation.get({"item_code": item_code})
+			if item:
+				product_info["qty"] = item[0].qty
+
+	return frappe._dict({
+		"product_info": product_info,
+		"cart_settings": cart_settings
+	})
+
+
+product_info.get_product_info_for_website=get_product_info_for_website
