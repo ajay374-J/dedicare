@@ -1,0 +1,357 @@
+<div class="layer-1" style="min-height:70px; background:#fafbfc; padding:5px 0;">
+  <div class="search-input-container">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <a href="/" style="flex-shrink:0; margin-right:15px;">
+        <img id="logo" src="/files/logo.png" width="45"
+          style="background:#fff;border-radius:50%;display:block; margin-top:-10px" alt="Logo">
+
+      </a>
+      <div style="flex-grow:1; position:relative;">
+        <input id="felix-search-box" placeholder="Search Products" autocomplete="off"
+          style="margin-top:-10px">
+        <div id="results-container" class="search-results-dropdown" style="display: hidden;">
+          <div class="search-tabs">
+            <div class="search-tab active" data-tab="products">Products</div>
+          </div>
+          <div id="tab-content-products" class="search-tab-content active">
+            <div class="brand-filter-container">
+              <div class="brand-heading">Filter by Brand</div>
+              <div id="brand-filter-products" class="brand-checkbox-row">
+              </div>
+            </div>
+            <div class="search-columns">
+              <div id="group-list-products" class="group-list">
+              </div>
+              <div id="group-items-products" class="group-items">
+              </div>
+            </div>
+          </div>
+          <div id="tab-content-mypartcode" class="search-tab-content">
+            <div class="brand-filter-container">
+              <div class="brand-heading">Filter by Brand</div>
+              <div id="brand-filter-mypartcode" class="brand-checkbox-row"></div>
+            </div>
+            <div class="search-columns">
+              <div id="group-list-mypartcode" class="group-list"></div>
+              <div id="group-items-mypartcode" class="group-items"></div>
+            </div>
+            <div id="mypartcode-message" class="search-message" style="display: flex;">Log in to search by your part
+              codes.</div>
+          </div>
+          <div id="general-message" class="search-message" style="display: none;">Searching…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-light navbar-expand bg-light">
+  <div class="container">
+    <!-- Collapsible content first -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto"></ul>
+      <ul class="navbar-nav ml-auto">
+        {% set current_path = frappe.request.path if frappe.request else '' %}
+        {% if frappe.session.user != 'Guest' %}
+        <li class="nav-item {% if current_path.startswith('/me') %}active{% endif %}">
+          <a class="nav-link" href="/me">My Account</a>
+        </li>
+        <li class="nav-item {% if current_path.startswith('/wishlist') %}active{% endif %}">
+          <a class="nav-link" href="/wishlist">Wishlist</a>
+        </li>
+        <li class="nav-item {% if current_path.startswith('/cart') %}active{% endif %}">
+          <a class="nav-link" href="/cart">Cart</a>
+        </li>
+        <li class="nav-item {% if current_path.startswith('/dashboard') %}active{% endif %}">
+          <a class="nav-link" href="/?cmd=web_logout">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link btn-login-area" href="/login?redirect-to=/">Login</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <!-- Toggler button on the far right -->
+    <!-- <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars fa-lg"></i>
+    </button> -->
+  </div>
+</nav>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchBox = document.getElementById("felix-search-box");
+    const resultsContainer =
+      document.getElementById("results-container");
+    const tabs = resultsContainer.querySelectorAll(".search-tab");
+    const tabContents = resultsContainer.querySelectorAll(
+      ".search-tab-content"
+    );
+    // const myPartTab = resultsContainer.querySelector(
+    //   '[data-tab="mypartcode"]'
+    // );
+    const myPartMsg = document.getElementById("mypartcode-message");
+    const generalMsg = document.getElementById("general-message");
+
+    const elements = {
+      products: {
+        brandFilter: document.getElementById("brand-filter-products"),
+        groupList: document.getElementById("group-list-products"),
+        groupItems: document.getElementById("group-items-products"),
+      },
+      mypartcode: {
+        brandFilter: document.getElementById("brand-filter-mypartcode"),
+        groupList: document.getElementById("group-list-mypartcode"),
+        groupItems: document.getElementById("group-items-mypartcode"),
+      },
+    };
+
+    let allGeneral = [],
+      allMyPart = [];
+    let selectedBrands = {
+      products: new Set(),
+      mypartcode: new Set(),
+    };
+    let currentGroup = {
+      products: null,
+      mypartcode: null,
+    };
+    let activeTab = "products";
+    let customerFound = false;
+    let isFetching = false,
+      debounce;
+
+    searchBox.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const query = this.value.trim();
+        if (query.length >= 2) {
+          // navigate to your new page, passing the query as URL-param
+          window.location.href = `/search_results?query=${encodeURIComponent(
+            query
+          )}`;
+        }
+      }
+    });
+
+    // debounce + fetch
+    searchBox.addEventListener("input", () => {
+      clearTimeout(debounce);
+      const q = searchBox.value.trim().toLowerCase();
+      if (q.length < 2)
+        return (resultsContainer.style.display = "none");
+      debounce = setTimeout(fetchAndRender, 350);
+    });
+
+    async function fetchAndRender() {
+      if (isFetching) return;
+      isFetching = true;
+      showLoading("Searching…");
+      try {
+        let resp = await frappe.call({
+          method: "dedicare.dedicare.api.fetch_results",
+          args: {
+            search_string: searchBox.value
+          }
+        });
+
+        const msg = resp.message || resp;
+
+        allGeneral = msg;
+        allMyPart = []
+        renderResults();
+      } catch (e) {
+        showLoading(e.message);
+      } finally {
+        isFetching = false;
+      }
+    }
+
+    function renderResults() {
+      hideLoading();
+      clearMessages();
+      if (!allGeneral.length && !allMyPart.length) {
+        showGeneral("No results found.");
+        return;
+      }
+      resultsContainer.style.display = "flex";
+
+      // enable/disable My Part Code tab
+      if (!customerFound) {
+        // myPartTab.classList.add("disabled");
+        myPartMsg.textContent = "Log in to search by your part codes.";
+        myPartMsg.style.display = "flex";
+      } else {
+        // myPartTab.classList.remove("disabled");
+        myPartMsg.style.display = "none";
+      }
+
+      drawTab("products", allGeneral);
+      setActiveTab(activeTab);
+    }
+
+    tabs.forEach((t) =>
+      t.addEventListener("click", () => {
+        if (!t.classList.contains("disabled"))
+          setActiveTab(t.dataset.tab);
+      })
+    );
+
+    function drawTab(tabName, data) {
+      const { brandFilter, groupList, groupItems } = elements[tabName];
+      brandFilter.innerHTML = "";
+      groupList.innerHTML = "";
+      groupItems.innerHTML = "";
+
+      if (!data.length) {
+        if (tabName === "products") showGeneral("No products found.");
+        else if (customerFound) {
+          myPartMsg.textContent = "No matching part codes.";
+          myPartMsg.style.display = "flex";
+        }
+        return;
+      }
+
+      // brands
+      const brands = [
+        ...new Set(
+          data.map((i) => i.brand).filter((b) => b && b !== "No Brand")
+        ),
+      ].sort();
+      
+      brands.forEach((b) => {
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.id = `cb-${tabName}-${b}`;
+        cb.value = b;
+        cb.addEventListener("change", () => {
+          cb.checked
+            ? selectedBrands[tabName].add(b)
+            : selectedBrands[tabName].delete(b);
+          renderGroupItems(tabName);
+        });
+        const lbl = document.createElement("label");
+        lbl.htmlFor = cb.id;
+        lbl.textContent = b;
+        const wrapper = document.createElement("div");
+        wrapper.className = "brand-checkbox";
+        wrapper.append(cb, lbl);
+        brandFilter.append(wrapper);
+      });
+
+      // groups
+      const groups = data.reduce((acc, item) => {
+        const g = item.item_group || "Others";
+        (acc[g] = acc[g] || []).push(item);
+        return acc;
+      }, {});
+      Object.keys(groups)
+        .sort()
+        .forEach((g) => {
+          const d = document.createElement("div");
+          d.textContent = `${g} (${groups[g].length})`;
+          d.dataset.group = g;
+          d.addEventListener("click", () => {
+            currentGroup[tabName] = g;
+            highlightGroup(tabName);
+            renderGroupItems(tabName);
+          });
+          groupList.append(d);
+        });
+
+      currentGroup[tabName] = Object.keys(groups)[0];
+      highlightGroup(tabName);
+      renderGroupItems(tabName);
+    }
+
+    function highlightGroup(tabName) {
+      const nodes = elements[tabName].groupList.children;
+      Array.from(nodes).forEach((n) => {
+        n.classList.toggle(
+          "active",
+          n.dataset.group === currentGroup[tabName]
+        );
+      });
+    }
+
+    function renderGroupItems(tabName) {
+      const { groupItems } = elements[tabName];
+      groupItems.innerHTML = "";
+      const data = tabName === "products" ? allGeneral : allMyPart;
+      const filtered = data.filter((i) => {
+        const byGroup =
+          i.item_group === currentGroup[tabName] ||
+          (!i.item_group && currentGroup[tabName] === "Others");
+        const brands = selectedBrands[tabName];
+        const byBrand = !brands.size || brands.has(i.brand);
+        return byGroup && byBrand;
+      });
+
+      if (!filtered.length) {
+        const m = document.createElement("div");
+        m.className = "search-message";
+        m.textContent = "No items match the filters.";
+        groupItems.append(m);
+        return;
+      }
+
+      filtered.forEach((item) => {
+        const a = document.createElement("a");
+        a.href = item.route.startsWith("/")
+          ? item.route
+          : `/${item.route}`;
+        a.innerHTML = `
+            <img src="${item.image || "/assets/dedicare/images/no-image.png"
+          }" onerror="this.src='/assets/dedicare/images/no-image.png'">
+            <div class="item-details">
+              <span class="item-name">${item.item_name}</span>
+              <div class="item-codes">
+                ${[
+            item.custom_supplier_part_code &&
+            `Sup: ${item.custom_supplier_part_code}`,
+            item.item_code && `Code: ${item.item_code}`,
+            tabName === "mypartcode" &&
+            item.customer_ref_codes &&
+            `My: ${item.customer_ref_codes.split(",")[0]}`,
+          ]
+            .filter((x) => x)
+            .join(" | ")}
+              </div>
+            </div>`;
+        a.className = "item-link";
+        groupItems.append(a);
+      });
+    }
+
+    function setActiveTab(name) {
+      if (name === "mypartcode" && !customerFound) name = "products";
+      activeTab = name;
+      tabs.forEach((t) =>
+        t.classList.toggle("active", t.dataset.tab === name)
+      );
+      tabContents.forEach((c) =>
+        c.classList.toggle("active", c.id === `tab-content-${name}`)
+      );
+    }
+
+    function showLoading(msg) {
+      generalMsg.textContent = msg;
+      generalMsg.style.display = "flex";
+      resultsContainer.style.display = "flex";
+    }
+    function hideLoading() {
+      generalMsg.style.display = "none";
+    }
+    function showGeneral(txt) {
+      generalMsg.textContent = txt;
+      generalMsg.style.display = "flex";
+    }
+    function clearMessages() {
+      generalMsg.style.display = "none";
+      myPartMsg.style.display = "none";
+    }
+  });
+</script>

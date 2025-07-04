@@ -1,0 +1,79 @@
+{
+ "creation": "2025-06-28 15:08:22.089697",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_name",
+  "item_description",
+  "item_route",
+  "item_image",
+  "item_website_image",
+  "item_website_description"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "item_code.description",
+   "fieldname": "item_description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Description"
+  },
+  {
+   "fetch_from": "item_code.route",
+   "fieldname": "item_route",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Route"
+  },
+  {
+   "fetch_from": "item_code.image",
+   "fieldname": "item_image",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Image"
+  },
+  {
+   "fetch_from": "item_code.website_image",
+   "fieldname": "item_website_image",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Website Image"
+  },
+  {
+   "fetch_from": "item_code.web_long_description",
+   "fieldname": "item_website_description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Website Description"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-07-02 17:25:15.281936",
+ "modified_by": "sahannan96@gmail.com",
+ "module": "Dedicare",
+ "name": "Wishlist Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

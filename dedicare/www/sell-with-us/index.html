@@ -1,0 +1,372 @@
+{% extends "templates/web.html" %}
+
+{% block head_include %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<style>
+	:root {
+		--primary-color: #0056b3;
+		--primary-hover-color: #004494;
+		--text-color: #333;
+		--text-light: #555;
+		--bg-light: #ffffff;
+		--bg-medium: #f9f9f9;
+		--border-color: #eaeaea;
+		--shadow-color: rgba(0, 0, 0, 0.08);
+		--shadow-hover-color: rgba(0, 0, 0, 0.12);
+		--font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+		sans-serif;
+		--border-radius-small: 4px;
+		--border-radius-medium: 8px;
+		--spacing-small: 8px;
+		--spacing-medium: 16px;
+		--spacing-large: 24px;
+		--spacing-xlarge: 40px;
+		--transition-speed: 0.2s;
+	}
+ 
+  body{
+    background: linear-gradient(120deg, #ff8af5, #83eaf1);
+  }
+
+	.hero {
+		background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+		url(/files/banner.png) center / cover no-repeat;
+		height: 420px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		color: white;
+		text-align: center;
+		padding: 2rem;
+		text-align: center;
+    border-radius: 10px;
+    margin-bottom: 60px;
+	}
+
+	.hero h1 {
+		font-size: 2.8rem;
+		margin-bottom: var(--spacing-medium);
+		font-weight: 600;
+		text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+		color: white;
+	}
+	@media (min-width: 576px) {
+		h1 {
+		font-size: 2.5rem;
+		margin-top: 3.5rem;
+		margin-bottom: 1.25rem;
+		}
+	}
+	h1 {
+		font-size: 2rem;
+		line-height: 1.25;
+		letter-spacing: -0.025em;
+		margin-top: 3rem;
+		margin-bottom: 0.75rem;
+	}
+	.hero p {
+		margin-top: 1rem;
+		font-size: 1.2rem;
+		margin-bottom: var(--spacing-large);
+		max-width: 600px;
+		margin-left: auto;
+		margin-right: auto;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+	}
+	p {
+		line-height: 1.7;
+	}
+	.hero .hero-btn {
+		background-color: var(--primary-color);
+		color: var(--bg-light);
+		padding: 12px 28px;
+		font-size: 1rem;
+		font-weight: 500;
+		text-decoration: none;
+		border-radius: var(--border-radius-small);
+		transition: background-color var(--transition-speed) ease,
+		transform var(--transition-speed) ease;
+		display: inline-block;
+	}
+	.hero .hero-btn:hover {
+		background-color: var(--primary-hover-color);
+		transform: translateY(-2px);
+		color: var(--bg-light);
+	}
+
+  .section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 40px 20px;
+    margin-bottom: 60px;
+  }
+
+  .ft-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 2rem;
+    color: #333;
+  }
+
+  p.section-subtitle {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 1.1rem;
+    color: #555;
+  }
+
+	.why-sell-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+  }
+
+  .why-sell-card {
+    flex: 1;
+    min-width: 250px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 30px 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .why-sell-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  }
+
+  .why-sell-card i {
+    font-size: 2.5rem;
+    color: #007BFF;
+    margin-bottom: 15px;  
+  }
+
+  .why-sell-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #007BFF;
+  }
+
+  .why-sell-card p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #555;
+  }
+
+  .process-steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+  }
+
+  .process-step {
+    flex: 1;
+    min-width: 250px;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .process-step i {
+    font-size: 2.5rem;
+    color: #007BFF;
+    margin-bottom: 15px;
+  }
+
+  .process-step h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #007BFF;
+  }
+
+  @media (min-width: 576px) {
+    h2 {
+        font-size: 2rem;
+        margin-top: 4rem;
+        margin-bottom: .75rem;
+    }
+    h3 {
+      font-size: 1.4rem;
+      margin-top: 2.5rem;
+    }
+    
+    h2, h3{
+      font-weight: 600;
+    }
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 20px auto 0 auto;
+  }
+
+  .contact-form input, .contact-form textarea {
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .contact-form input, .contact-form textarea {
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  textarea {
+    overflow: auto;
+    resize: vertical;
+  }
+
+  .contact-form button {
+    padding: 15px;
+    border: none;
+    background: #007BFF;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+	</style>
+{% endblock %}
+
+{% block content %}
+	<section class="hero">
+    <h1>Empower Your MRO Business with Felix Tools!</h1>
+    <p>
+      Join our curated supplier network, reach the right buyers, and grow your distribution online.
+    </p>
+    <a href="#" class="hero-btn">Get Started</a>
+	</section>
+
+	<section class="section" id="why-sell">
+    <div class="ft-container">
+      <h2>Why Sell with Felix Tools?</h2>
+      <p class="section-subtitle">
+        Partner with us to experience unparalleled benefits for your MRO products.
+      </p>
+      <div class="why-sell-cards">
+        <!-- Card 1: Exclusivity -->
+        <div class="why-sell-card">
+          <i class="fas fa-handshake"></i>
+          <h3>Exclusivity for Suppliers</h3>
+          <p>
+            Secure an exclusive arrangement in your product category. We ensure you become the sole supplier for your offerings.
+          </p>
+        </div>
+        <!-- Card 2: Managed Supply Chain -->
+        <div class="why-sell-card">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Managed Supply Chain</h3>
+          <p>
+            Our end-to-end supply chain management protects you from fraudulent orders and streamlines your operations.
+          </p>
+        </div>
+        <!-- Card 3: Fast Payments -->
+        <div class="why-sell-card">
+          <i class="fas fa-money-bill-wave"></i>
+          <h3>Fast Payments</h3>
+          <p>
+            Enjoy industry-leading payment terms with funds transferred within 7 days after delivery, ensuring robust cash flow.
+          </p>
+        </div>
+        <!-- Card 4: Wider Audience Reach -->
+        <div class="why-sell-card">
+          <i class="fas fa-globe"></i>
+          <h3>Wider Audience Reach</h3>
+          <p>
+            Gain exposure to thousands of potential customers through our high-traffic, well-established platform.
+          </p>
+        </div>
+        <!-- Card 5: Dedicated Marketing Support -->
+        <div class="why-sell-card">
+          <i class="fas fa-bullhorn"></i>
+          <h3>Dedicated Marketing Support</h3>
+          <p>
+            Benefit from targeted marketing strategies and promotions that enhance your brand visibility and drive sales.
+          </p>
+        </div>
+        <!-- Card 6: Data-Driven Insights -->
+        <div class="why-sell-card">
+          <i class="fas fa-chart-line"></i>
+          <h3>Data-Driven Insights</h3>
+          <p>
+            Leverage our advanced analytics tools to gain insights on market trends and optimize your product strategy.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="process">
+    <div class="ft-container">
+      <h2>Our Simple Process</h2>
+      <p class="section-subtitle">
+        Register with us and effortlessly list your products on our high-traffic platform.
+      </p>
+      <div class="process-steps">
+        <!-- Step 1 -->
+        <div class="process-step">
+          <i class="fas fa-clipboard-list"></i>
+          <h3>1. Join &amp; List</h3>
+          <p>
+            Sign up with Felix Tools and add your MRO products to our online marketplace. Our user-friendly interface makes it quick and simple.
+          </p>
+        </div>
+        <!-- Step 2 -->
+        <div class="process-step">
+          <i class="fas fa-cogs"></i>
+          <h3>2. Managed Supply</h3>
+          <p>
+            We handle the entire supply chain—from order management to delivery—minimizing fraud and ensuring efficient logistics.
+          </p>
+        </div>
+        <!-- Step 3 -->
+        <div class="process-step">
+          <i class="fas fa-money-bill-wave"></i>
+          <h3>3. Fast Payment</h3>
+          <p>
+            Receive your payments within 7 days of product delivery, ensuring a swift and reliable cash flow.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="ft-container">
+      <h2>Get in Touch</h2>
+      <p class="section-subtitle">
+        Have questions or ready to join our exclusive network? Fill out the form below and our team will reach out shortly.
+      </p>
+      <div class="contact-form">
+        <input type="text" name="name" placeholder="Your Name" required="">
+        <input type="email" name="email" placeholder="Your Email" required="">
+        <input type="tel" name="phone" placeholder="Your Phone" required="">
+        <input type="text" name="company" placeholder="Company Name" required="">
+        <textarea name="message" rows="5" placeholder="Your Message" required=""></textarea>
+        <button type="submit" class="btn-send">Submit</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    {% include "templates/includes/contact.js" %}
+  </script>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends "templates/web.html" %}
+
+{% block title %} {{ _("Dedicare") }} {% endblock %}
+
+{% block head_include %}
+	<style>
+	:root {
+		--primary-color: #0056b3;
+		--primary-hover-color: #004494;
+		--text-color: #333;
+		--text-light: #555;
+		--bg-light: #ffffff;
+		--bg-medium: #f9f9f9;
+		--border-color: #eaeaea;
+		--shadow-color: rgba(0, 0, 0, 0.08);
+		--shadow-hover-color: rgba(0, 0, 0, 0.12);
+		--font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+		sans-serif;
+		--border-radius-small: 4px;
+		--border-radius-medium: 8px;
+		--spacing-small: 8px;
+		--spacing-medium: 16px;
+		--spacing-large: 24px;
+		--spacing-xlarge: 40px;
+		--transition-speed: 0.2s;
+	}
+	.hero {
+		background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+		url(/files/banner.png) center / cover no-repeat;
+		height: 420px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		color: white;
+		text-align: center;
+		padding: 2rem;
+		text-align: center;
+	}
+
+	.hero h1 {
+		font-size: 2.8rem;
+		margin-bottom: var(--spacing-medium);
+		font-weight: 600;
+		text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+		color: white;
+	}
+	@media (min-width: 576px) {
+		h1 {
+		font-size: 2.5rem;
+		margin-top: 3.5rem;
+		margin-bottom: 1.25rem;
+		}
+	}
+	h1 {
+		font-size: 2rem;
+		line-height: 1.25;
+		letter-spacing: -0.025em;
+		margin-top: 3rem;
+		margin-bottom: 0.75rem;
+	}
+	.hero p {
+		margin-top: 1rem;
+		font-size: 1.2rem;
+		margin-bottom: var(--spacing-large);
+		max-width: 600px;
+		margin-left: auto;
+		margin-right: auto;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+	}
+	p {
+		line-height: 1.7;
+	}
+	.hero .hero-btn {
+		background-color: var(--primary-color);
+		color: var(--bg-light);
+		padding: 12px 28px;
+		font-size: 1rem;
+		font-weight: 500;
+		text-decoration: none;
+		border-radius: var(--border-radius-small);
+		transition: background-color var(--transition-speed) ease,
+		transform var(--transition-speed) ease;
+		display: inline-block;
+	}
+	.hero .hero-btn:hover {
+		background-color: var(--primary-hover-color);
+		transform: translateY(-2px);
+		color: var(--bg-light);
+	}
+
+	.categories-container {
+		max-width: 1200px;
+		margin: var(--spacing-xlarge) auto;
+		padding: 0 var(--spacing-large);
+	}
+	.categories-title {
+		font-size: 2rem;
+		font-weight: 600;
+		margin-bottom: var(--spacing-large);
+		text-align: center;
+		color: var(--text-color);
+	}
+	@media (min-width: 576px) {
+		h2 {
+		font-size: 2rem;
+		margin-top: 4rem;
+		margin-bottom: 0.75rem;
+		}
+	}
+
+	.categories-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: 1.5rem;
+	}
+	.categories-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: var(--spacing-large);
+	}
+
+	.category-item {
+		background: var(--bg-light);
+		border-radius: var(--border-radius-medium);
+		padding: var(--spacing-large);
+		text-align: center;
+		transition: box-shadow var(--transition-speed) ease,
+		transform var(--transition-speed) ease;
+		cursor: pointer;
+		box-shadow: 0 2px 5px var(--shadow-color);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.category-item:hover {
+		box-shadow: 0 5px 15px var(--shadow-hover-color);
+		transform: translateY(-4px);
+	}
+
+	.category-item a {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-decoration: none;
+		color: inherit;
+		width: 100%;
+	}
+	.category-item img {
+		width: 80px;
+		height: 80px;
+		margin-bottom: var(--spacing-medium);
+		object-fit: contain;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+	</style>
+{% endblock %}
+
+{% block content %}
+	<section class="hero">
+		<div class="ft-container">
+			<h1>{{ tag_line }}</h1>
+			<p>{{ description }}</p>
+		</div>
+	</section>
+	<section class="categories-container">
+	<h2 class="categories-title">Explore Our Categories</h2>
+	<div class="categories-grid">
+		{% for category in cats %}
+		<div class="category-item">
+		<a href="{{ category.route }}">
+			<img src="{{ category.image }}" alt="{{ category.name }}" />
+			<p>{{ category.name }}</p>
+		</a>
+		</div>
+		{% endfor %}
+	</div>
+	</section>
+{% endblock %}

@@ -1,3 +1,7 @@
+{% block head_include %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
 {%if frappe.request.path=="/products"%}
 {% set item_group = frappe.db.get_value('Item Group', {"name":item.name,"parent_item_group":"Products"}, "name") %}
 {%if item_group%}
@@ -6,7 +10,8 @@
         <div class="col-md-3">
             <div class="card-body">
                 <a class="no-underline" href="/{{ item.route }}">
-                    <img class="website-image" src="{{ item.website_image or item.image or 'no-image.jpg' }}" alt="{{ item.item_name }}">
+                    <img class="website-image" src="{{ item.website_image or item.image or 'no-image.jpg' }}"
+                        alt="{{ item.item_name }}">
                 </a>
             </div>
         </div>
@@ -14,14 +19,13 @@
             <div class="card-body">
                 <h5 class="card-title">
                     <a class="text-dark" href="/{{ item.route }}">
-                    
                         {{ item.item_name or item.name }}
                     </a>
                 </h5>
                 <p class="card-text">
                     {{ item.website_description or item.description or '<i class="text-muted">No description</i>' }}
                 </p>
-                <a href="/{{ item.route }}" class="btn btn-sm btn-light">{{ _('More details') }}</a>
+                <a href="/{{ item.route }}" class="btn btn-sm btn-light">{{ _('More detailsaaa') }}</a>
             </div>
         </div>
     </div>
@@ -34,7 +38,8 @@
         <div class="col-md-3">
             <div class="card-body">
                 <a class="no-underline" href="/{{ item.route }}">
-                    <img class="website-image" src="{{ item.website_image or item.image or 'no-image.jpg' }}" alt="{{ item.item_name }}">
+                    <img class="website-image" src="{{ item.website_image or item.image or 'no-image.jpg' }}"
+                        alt="{{ item.item_name }}">
                 </a>
             </div>
         </div>
@@ -42,17 +47,92 @@
             <div class="card-body">
                 <h5 class="card-title">
                     <a class="text-dark" href="/{{ item.route }}">
-                    
                         {{ item.item_name or item.name }}
                     </a>
+                    {% if item.item_code %}
+                        <div class="wishlist-icon" onclick="toggle_wishlist_item('{{ item.item_code }}')"
+                            id="{{ item.item_code }}">
+                            <i class="fa-regular fa-heart text-danger"></i>
+                        </div>
+                    {% endif %}
                 </h5>
                 <p class="card-text">
+                    {% if item.item_code %}
+                    Item Code: {{ item.item_code }}
+                    {% else %}
                     {{ item.website_description or item.description or '<i class="text-muted">No description</i>' }}
+                    {% endif %}
                 </p>
+                <p class="font-weight-bold">
+                    {{ item.product_info.price.formatted_price if item.product_info.price else "" }}
+                </p>
+                {% include "templates/generators/item/item_add_to_cart.html" %}
                 <a href="/{{ item.route }}" class="btn btn-sm btn-light">{{ _('More details') }}</a>
             </div>
         </div>
     </div>
 </div>
-
 {%endif%}
+
+{% block base_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let wishlist = localStorage.getItem('wishlist')
+            ? JSON.parse(localStorage.getItem('wishlist'))
+            : [];
+
+        document.querySelectorAll('.wishlist-icon').forEach(icon_wrapper => {
+            const icon = icon_wrapper.querySelector('i');
+
+            if (wishlist.includes(icon_wrapper.id)) {
+                icon.classList.add('fa-solid');
+                icon.classList.remove('fa-regular');
+            } else {
+                icon.classList.add('fa-regular');
+                icon.classList.remove('fa-solid');
+            }
+        });
+    });
+
+
+    function toggle_wishlist_item(itemCode) {
+        const iconContainer = document.getElementById(itemCode);
+        const heartIcon = iconContainer.querySelector('i');
+
+        frappe.call({
+            method: "dedicare.dedicare.doctype.wishlist.wishlist.toggle_wishlist_item",
+            args: {
+                "item": itemCode
+            },
+            callback: (r) => {
+                if (r.message) {
+                    if (r.message.action === "added") {
+                        heartIcon.classList.remove('fa-regular');
+                        heartIcon.classList.add('fa-solid');
+                        update_local_storage(itemCode, true);
+                    } else {
+                        heartIcon.classList.remove('fa-solid');
+                        heartIcon.classList.add('fa-regular');
+                        update_local_storage(itemCode, false);
+                    }
+                }
+            }
+        });
+    }
+
+
+    function update_local_storage(item_code, update) {
+        let wishlist = localStorage.getItem('wishlist');
+        wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+
+        if (update) {
+            if (!wishlist.includes(item_code)) {
+                wishlist.push(item_code);
+            }
+        } else {
+            wishlist = wishlist.filter(x => x !== item_code);
+        }
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    }
+</script>
+{% endblock %}

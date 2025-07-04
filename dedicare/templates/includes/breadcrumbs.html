@@ -1,0 +1,26 @@
+{% if not no_breadcrumbs and parents %}
+	<div class="container mt-3">
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb" itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+				{%- set parents = parents[-3:] %}
+				<li class="breadcrumb-item">
+					<a href="/">
+						Home
+					</a>
+				</li>
+				{% for parent in parents %}
+					{% if parent.name not in ["Products", "All Products", "Home"] %}
+						<li class="breadcrumb-item">
+							<a href="{{ url_prefix }}{{ parent.route | abs_url }}" itemprop="url">
+								{{ parent.title or parent.label or parent.name or "" }}
+							</a>
+						</li>
+					{% endif %}
+				{% endfor %}
+				<li class="breadcrumb-item active" aria-current="page">
+					{{ title or "" }}
+				</li>
+			</ol>
+		</nav>
+	</div>
+{% endif %}

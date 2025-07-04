@@ -2,7 +2,7 @@
 
 {% set cart_settings = shopping_cart.cart_settings %}
 {% set product_info = shopping_cart.product_info %}
-
+<script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
 <div class="item-cart row mt-2" data-variant-item-code="{{ item_code }}">
 	<div class="col-md-12">
 		{% if cart_settings.show_price and product_info.price %}

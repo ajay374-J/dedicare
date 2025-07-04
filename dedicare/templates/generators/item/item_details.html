@@ -1,0 +1,110 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<div class="col-md-7 product-details">
+	<div class="d-flex">
+		<!-- title -->
+		<div class="product-title col-11" itemprop="name">
+			{{ _(doc.item_name) }}
+		</div>
+		<div class="wishlist-icon" data-item-code="{{ doc.item_code }}">
+			{% set match = frappe.get_all("Wishlist Item",
+			fields=["name"],
+			filters={"parent": frappe.session.user, "item_code": doc.item_code}
+			) %}
+
+			{% if match %}
+			<i class="fa-solid fa-heart text-danger"></i>
+			{% else %}
+			<i class="fa-regular fa-heart text-danger"></i>
+			{% endif %}
+
+		</div>
+	</div>
+
+	<div itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+	</div>
+
+	<div itemprop="review" itemscope itemtype="https://schema.org/Review">
+	</div>
+
+	<p class="product-code">
+		<span class="product-item-group">
+			{{ _(doc.item_group) }}
+		</span>
+		<span class="product-item-code" itemprop="name">
+			{{ _("Item Code") }}:
+		</span>
+		<span itemprop="name">{{ _(doc.item_code) }}</span>
+	</p>
+	{% if has_variants %}
+	<!-- configure template -->
+	{% include "templates/generators/item/item_configure.html" %}
+	{% else %}
+	<!-- add variant to cart -->
+	{% include "templates/generators/item/item_add_to_cart.html" %}
+	{% endif %}
+	<!-- description -->
+	<div class="product-description" itemprop="description">
+		{% if frappe.utils.strip_html(doc.web_long_description or '') %}
+		{{ _(doc.web_long_description) | safe }}
+		{% elif frappe.utils.strip_html(doc.description or '') %}
+		{{ _(doc.description) | safe }}
+		{% else %}
+		{{ "" }}
+		{% endif %}
+	</div>
+</div>
+
+{% block base_scripts %}
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		console.log("loaded");
+
+		$('.wishlist-icon').on('click', function () {
+			console.log("click")
+			if (frappe.session.user === "Guest") {
+				frappe.msgprint(__("Please login to add items to your wishlist."));
+				return;
+			}
+
+			const iconContainer = $(this);
+			const itemCode = iconContainer.data('item-code');
+			const heartIcon = iconContainer.find('i');
+
+			frappe.call({
+				method: "dedicare.dedicare.doctype.wishlist.wishlist.toggle_wishlist_item",
+				args: {
+					"item": itemCode
+				},
+				callback: (r) => {
+					console.log("2", r.message);
+					if (r.message) {
+						if (r.message.action === "added") {
+							heartIcon.removeClass('fa-regular').addClass('fa-solid');
+							update_local_storage(itemCode, 1)
+						} else {
+							heartIcon.removeClass('fa-solid').addClass('fa-regular');
+							update_local_storage(itemCode, 0)
+						}
+					}
+				}
+			});
+		});
+	});
+
+	function update_local_storage(item_code, update) {
+		let wishlist = localStorage.getItem('wishlist');
+		wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+
+		if (update) {
+			if (!wishlist.includes(item_code)) {
+				wishlist.push(item_code);
+			}
+		} else {
+			wishlist = wishlist.filter(x => x !== item_code);
+		}
+
+		localStorage.setItem('wishlist', JSON.stringify(wishlist));
+	}
+
+</script>
+{% endblock %}

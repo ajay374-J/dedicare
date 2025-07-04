@@ -19,7 +19,7 @@ app_license = "MIT"
 # app_include_js = "/assets/dedicare/js/dedicare.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/dedicare/css/dedicare.css"
+web_include_css = ["assets/dedicare/css/dedicare.css"]
 # web_include_js = "/assets/dedicare/js/dedicare.js"
 
 # include js in page
@@ -39,7 +39,7 @@ app_license = "MIT"
 
 # website user home page (by Role)
 # role_home_page = {
-#	"Role": "home_page"
+# 	"Role": "home_page"
 # }
 
 # Website user home page (by function)
@@ -84,7 +84,7 @@ app_license = "MIT"
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
-#	}
+# 	}
 # }
 
 # Scheduled Tasks
@@ -126,4 +126,3 @@ app_license = "MIT"
 # override_doctype_dashboards = {
 # 	"Task": "dedicare.task.get_dashboard_data"
 # }
-

@@ -1,0 +1,347 @@
+/* COMMON */
+:root {
+  --ff-bg-light: linear-gradient(135deg, #fde0dc, #f9bdbb, #f69988);
+  --ff-text-light: #333;
+  --ff-link-light: #555;
+  --ff-link-hover-light: #d32f2f;
+  --ff-bg-dark: linear-gradient(135deg, #3a3a3a, #2c2c2c);
+  --ff-text-dark: #eee;
+  --ff-link-dark: #ccc;
+  --ff-link-hover-dark: #ff8a80;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body > .container:only-child,
+body > div[data-path] {
+  flex: 1 0 auto;
+}
+
+.wishlist-icon {
+  font-size: 20px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* NAVBAR 1 */
+.layer-1 {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.search-input-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 15px auto;
+  position: relative;
+  padding: 0 15px;
+}
+
+#felix-search-box {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+#felix-search-box:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+}
+
+.search-results-dropdown {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 15px;
+  right: 15px;
+  max-width: calc(1100px - 30px);
+  max-height: 60vh;
+  min-height: 150px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.search-tabs {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8f9fa;
+}
+
+.search-tab {
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  font-weight: 500;
+  color: #4a5568;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.search-tab.active {
+  color: #2c5282;
+  border-bottom-color: #3182ce;
+  font-weight: 600;
+}
+
+.search-tab.disabled {
+  color: #a0aec0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.search-tab-content {
+  display: none;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.search-tab-content.active {
+  display: flex;
+}
+
+.brand-filter-container {
+  color: black;
+  font-weight: normal;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f7f9fc;
+}
+
+.brand-heading {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.brand-checkbox-row {
+  color: black;
+  font-weight: normal;
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 4px;
+}
+
+.brand-checkbox {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.brand-checkbox input {
+  margin-right: 6px;
+  accent-color: #3182ce;
+  width: 14px;
+  height: 14px;
+}
+
+.brand-checkbox label {
+  color: black;
+  font-weight: normal;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.search-columns {
+  display: flex;
+  width: 100%;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.group-list {
+  flex: 0 0 35%;
+  background: #f7f9fc;
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+}
+
+.group-list div {
+  color: black;
+  font-weight: normal;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eaf0f6;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.group-list div.active {
+  background: #e2e8f0;
+  font-weight: 600;
+  color: #2c5282;
+}
+
+.group-items {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.group-items a {
+  color: black;
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+
+.group-items a:hover {
+  background: #f1f5f9;
+}
+
+.group-items img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  margin-right: 12px;
+  background: #fff;
+}
+
+.item-details {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.item-name {
+  color: black;
+  font-weight: normal;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-codes {
+  font-size: 11px;
+  color: #718096;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-message {
+  padding: 20px;
+  text-align: center;
+  color: #667488;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+  .search-columns {
+    flex-direction: column;
+  }
+
+  .group-list {
+    max-height: 180px;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+
+/* FOOTER */
+
+.felix-footer-xyz89 {
+  padding: 3rem 2rem;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  max-width: 1400px;
+  margin-top: 4rem;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #fde0dc, #f9bdbb, #f69988);
+  color: #333;
+  transition: background 0.3s, color 0.3s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .felix-footer-xyz89 {
+    background: linear-gradient(135deg, #3a3a3a, #2c2c2c);
+    color: #eee;
+  }
+}
+
+footer {
+  background: #1b1b1b;
+  color: white;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.felix-grid-782 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+footer div {
+  color: white;
+}
+
+.felix-footer-xyz89 h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  color: #8d99a6;
+}
+
+.felix-footer-xyz89 a {
+  color: #555;
+  display: block;
+  margin-bottom: 0.5rem;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  .felix-footer-xyz89 a {
+    color: #ccc;
+  }
+}
+footer a {
+  color: #ccc;
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+.felix-footer-xyz89 p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
