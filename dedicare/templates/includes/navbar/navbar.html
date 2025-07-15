@@ -2,9 +2,7 @@
   <div class="search-input-container">
     <div style="display:flex; align-items:center; justify-content:space-between;">
       <a href="/" style="flex-shrink:0; margin-right:15px;">
-        <img id="logo" src="/files/logo.png" width="150"
-          style="display:block; margin-top:-10px" alt="Logo">
-
+        <span>{{ brand_html or (frappe.get_hooks("brand_html") or ["Home"])[0] }}</span>
       </a>
       <div style="flex-grow:1; position:relative;">
         <input id="felix-search-box" placeholder="Search Products" autocomplete="off"

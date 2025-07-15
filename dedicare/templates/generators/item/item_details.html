@@ -57,10 +57,7 @@
 {% block base_scripts %}
 <script>
 	document.addEventListener("DOMContentLoaded", function () {
-		console.log("loaded");
-
 		$('.wishlist-icon').on('click', function () {
-			console.log("click")
 			if (frappe.session.user === "Guest") {
 				frappe.msgprint(__("Please login to add items to your wishlist."));
 				return;
@@ -76,7 +73,6 @@
 					"item": itemCode
 				},
 				callback: (r) => {
-					console.log("2", r.message);
 					if (r.message) {
 						if (r.message.action === "added") {
 							heartIcon.removeClass('fa-regular').addClass('fa-solid');

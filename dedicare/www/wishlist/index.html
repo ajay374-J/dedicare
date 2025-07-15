@@ -70,13 +70,11 @@
                     if (r.message.action === "removed") {
                         update_local_storage(itemCode, false);
 
-                        // 🔥 Remove the card from the DOM
                         const cardElement = iconContainer.closest(".card");
                         if (cardElement) {
                             cardElement.remove();
                         }
 
-                        // ✅ Optional: Show "Your Wishlist is Empty" if no more items
                         if (document.querySelectorAll(".card").length === 0) {
                             const emptyMessage = document.createElement("p");
                             emptyMessage.className = "text-muted";
