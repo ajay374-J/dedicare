@@ -4,3 +4,4 @@
 *.swp
 tags
 dedicare/docs/current
+__pycache__
